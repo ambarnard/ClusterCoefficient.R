@@ -1,0 +1,39 @@
+library(igraph)
+
+#Set working directory
+setwd("C:/Users/Allison/Dropbox/SNH (1)/AlopeciaProject2016/Community Structure/Edgelists/")
+
+#### NC6 Huddle ####
+#Read edgelist into R
+EL_NC6Huddle <- read.csv("6C_HuddlingEdgelist.csv", header = TRUE) 
+#Change factor to character because the network package doesn't work correctly with numeric IDs
+SEL_NC6Huddle <-data.frame(lapply(EL_NC6Huddle, as.character), stringsAsFactors = FALSE) 
+#Change the data frame of factors to a matrix format
+iEL_NC6Huddle <-as.matrix(SEL_NC6Huddle[,1:2]) 
+# Change the matrix to a graph-format edgelist
+inet_NC6Huddle <-graph.edgelist(iEL_NC6Huddle, directed = FALSE) 
+
+#Analyze global cluster transitivity (cagewide summary)
+NC6_huddle_transitivity_global<-transitivity(inet_NC6Huddle, type = "global") 
+#Analyze local cluster transitivity (for individual group members)
+NC6_huddle_transitivity_local<-transitivity(inet_NC6Huddle, type = "local", vids = V(inet_NC6Huddle)) 
+#Bind together the subject numbers and their local transitivity scores
+NC6_huddle_transitivity_local_cbind<-cbind(V(inet_NC6Huddle), NC6_huddle_transitivity_local) 
+
+#Write out global data
+write.csv(NC6_huddle_transitivity_global,"NC6_huddle_transitivity_global.csv") 
+#Write out local data
+write.csv(NC6_huddle_transitivity_local_cbind, "NC6_huddle_transitivity_local.csv") 
+
+#### NC6 Groom - Same steps as above ####
+EL_NC6groom <- read.csv("6C_GroomEXHPEdgelist.csv", header = TRUE)
+SEL_NC6groom <-data.frame(lapply(EL_NC6groom, as.character), stringsAsFactors = FALSE)
+iEL_NC6groom <-as.matrix(SEL_NC6groom[,1:2])
+inet_NC6groom <-graph.edgelist(iEL_NC6groom, directed = FALSE)
+
+NC6_groom_transitivity_global<-transitivity(inet_NC6groom, type = "global")
+NC6_groom_transitivity_local<-transitivity(inet_NC6groom, type = "local", vids = V(inet_NC6groom))
+NC6_groom_transitivity_local_cbind<-cbind(V(inet_NC6groom), NC6_groom_transitivity_local)
+
+write.csv(NC6_groom_transitivity_global,"NC6_groom_transitivity_global.csv")
+write.csv(NC6_groom_transitivity_local_cbind, "NC6_groom_transitivity_local.csv")
